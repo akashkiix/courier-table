@@ -1,34 +1,139 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <title>Courier Table</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 10px;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
     }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      background-color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+      overflow: hidden;
     }
+
+    thead {
+      background-color: #007bff;
+      color: white;
+    }
+
     th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
+      padding: 12px 15px;
       text-align: center;
+      border-bottom: 1px solid #ddd;
     }
-    th {
-      background-color: #f0f0f0;
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    img {
+      width: 60px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .no-data {
+      font-size: 16px;
+      color: #777;
+      text-align: center;
+      padding: 20px;
+    }
+
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+
+      td {
+        position: relative;
+        padding-left: 50%;
+        text-align: left;
+        border: none;
+        border-bottom: 1px solid #ddd;
+      }
+
+      td::before {
+        position: absolute;
+        top: 12px;
+        left: 15px;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: bold;
+        color: #333;
+      }
+
+      td:nth-of-type(1)::before { content: "Logo"; }
+      td:nth-of-type(2)::before { content: "Courier Name"; }
+      td:nth-of-type(3)::before { content: "Rate"; }
+      td:nth-of-type(4)::before { content: "ETA"; }
+      td:nth-of-type(5)::before { content: "Days"; }
+      td:nth-of-type(6)::before { content: "Rating"; }
     }
   </style>
 </head>
 <body>
-  <div id="tableContainer">Waiting for data...</div>
+  <h2>Available Courier Services</h2>
+  <div id="courierTable" class="no-data">Awaiting courier data...</div>
 
   <script>
-    window.onmessage = (event) => {
-      const html = event.data;
-      document.getElementById('tableContainer').innerHTML = html;
-    };
+    window.addEventListener("message", (event) => {
+      const { couriers } = event.data;
+      const tableContainer = document.getElementById("courierTable");
+
+      if (!couriers || couriers.length === 0) {
+        tableContainer.innerHTML = "<p class='no-data'>No courier options available.</p>";
+        return;
+      }
+
+      let tableHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Logo</th>
+              <th>Courier Name</th>
+              <th>Rate</th>
+              <th>ETA</th>
+              <th>Days</th>
+              <th>Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      couriers.forEach(courier => {
+        const logo = courier.logo || "https://via.placeholder.com/60x20?text=Logo";
+        tableHTML += `
+          <tr>
+            <td><img src="${logo}" alt="Logo" /></td>
+            <td>${courier.name}</td>
+            <td>₹${courier.rate}</td>
+            <td>${courier.eta}</td>
+            <td>${courier.days}</td>
+            <td>${courier.rating || "N/A"}</td>
+          </tr>
+        `;
+      });
+
+      tableHTML += `</tbody></table>`;
+      tableContainer.innerHTML = tableHTML;
+    });
   </script>
 </body>
 </html>
