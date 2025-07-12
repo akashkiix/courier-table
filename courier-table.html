@@ -47,26 +47,33 @@
     </tbody>
   </table>
 
-  <script>
-    window.addEventListener('message', function(event) {
-      if (event.data.type === 'COURIER_DATA') {
-        const couriers = event.data.payload;
-        const tableBody = document.getElementById('table-body');
-        tableBody.innerHTML = '';
+ <script>
+  window.addEventListener('message', function(event) {
+    if (event.data.type === 'COURIER_DATA') {
+      const couriers = event.data.payload;
+      const tableBody = document.getElementById('table-body');
+      tableBody.innerHTML = '';
 
-        couriers.forEach(item => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${item.courier_name || '-'}</td>
-            <td>${item.rate || '-'}</td>
-            <td>${item.etd || '-'}</td>
-            <td>${item.delivery_days || '-'}</td>
-            <td>${item.rating || '-'}</td>
-          `;
-          tableBody.appendChild(row);
-        });
+      if (!couriers.length) {
+        tableBody.innerHTML = '<tr><td colspan="6">No courier services available.</td></tr>';
+        return;
       }
-    });
-  </script>
+
+      couriers.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><img src="${item.logo}" alt="${item.courier_name}" width="80"/></td>
+          <td>${item.courier_name}</td>
+          <td>₹${item.rate}</td>
+          <td>${item.etd}</td>
+          <td>${item.delivery_days}</td>
+          <td>${item.rating}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+  });
+</script>
+
 </body>
 </html>
