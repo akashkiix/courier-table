@@ -1,50 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <title>Courier Table</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fff;
+      padding: 1rem;
+      background: #f9f9f9;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 0;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     th, td {
       border: 1px solid #ddd;
-      padding: 8px;
+      padding: 10px;
       text-align: center;
     }
     th {
-      background-color: #007bff;
+      background-color: #4CAF50;
       color: white;
     }
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-    img {
-      max-width: 80px;
-      height: auto;
+    caption {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
     }
   </style>
 </head>
 <body>
-  <table id="courierTable">
+  <table id="courier-table">
+    <caption>Available Courier Services</caption>
     <thead>
       <tr>
-        <th>Logo</th>
         <th>Courier Name</th>
-        <th>Rate (₹)</th>
-        <th>ETA</th>
-        <th>Days</th>
+        <th>Rate (INR)</th>
+        <th>Delivery ETA</th>
+        <th>Estimated Days</th>
         <th>Rating</th>
       </tr>
     </thead>
-    <tbody id="courierTableBody">
-      <!-- Data will be injected here -->
+    <tbody id="table-body">
+      <!-- Rows will be injected here -->
     </tbody>
   </table>
+
+  <script>
+    window.addEventListener('message', function(event) {
+      if (event.data.type === 'COURIER_DATA') {
+        const couriers = event.data.payload;
+        const tableBody = document.getElementById('table-body');
+        tableBody.innerHTML = '';
+
+        couriers.forEach(item => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.courier_name || '-'}</td>
+            <td>${item.rate || '-'}</td>
+            <td>${item.etd || '-'}</td>
+            <td>${item.delivery_days || '-'}</td>
+            <td>${item.rating || '-'}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+    });
+  </script>
 </body>
 </html>
